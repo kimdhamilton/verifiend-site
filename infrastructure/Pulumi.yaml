@@ -1,0 +1,18 @@
+name: verifiendsite
+description: Verifiend site hosted in an S3 bucket
+runtime: yaml
+resources:
+    # Create an AWS resource (S3 Bucket)
+    sitebucket:
+        type: aws:s3:Bucket
+    web:
+        type: "aws-static-website:index:Website"
+        properties:
+            sitePath: "../dashboard-app/build"
+            withCDN: true
+            targetDomain: verifiend.xyz
+            certificateARN: arn:aws:acm:us-east-1:126310764785:certificate/8e62f3e1-9ed4-4251-bd25-3f42288b58fb
+outputs:
+    # Export the name of the bucket
+    bucketName: ${sitebucket.id}
+    websiteURL: ${web.websiteURL}
