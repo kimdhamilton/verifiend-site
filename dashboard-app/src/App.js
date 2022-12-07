@@ -1,114 +1,52 @@
-// import logo from './logo.svg';
-import './App.css';
-import React, { useState, useEffect } from 'react';
-
-import "chartjs-adapter-moment";
-import { Chart, Line } from "react-chartjs-2";
+import React from 'react';
+import "semantic-ui-css/semantic.min.css";
 import {
-  Chart as ChartJS,
-  TimeScale,
-  TimeSeriesScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-} from "chart.js";
+    Container,
+    Grid,
+    Header,
+    Label,
+    Segment,
+} from 'semantic-ui-react';
+import { AccountList } from './components/AccountList';
+import { TimeSeriesChart } from './components/TimeSeriesChart';
+import TopMenu from './components/TopMenu';
 
-// import faker from 'faker';
+const DAILY_ENDPOINT = 'https://j7wyyzwjef.execute-api.us-east-1.amazonaws.com/stage/counts/';
+const HOURLY_ENDPOINT = 'https://j7wyyzwjef.execute-api.us-east-1.amazonaws.com/stage/hourly';
+const DIFFS_ENDPPOINT = 'https://j7wyyzwjef.execute-api.us-east-1.amazonaws.com/stage/diffs';
 
-const ENDPOINT = 'https://j7wyyzwjef.execute-api.us-east-1.amazonaws.com/stage/counts/';
+export const App = () => (
+    <div>
+        <TopMenu />
+        <Container style={{ marginTop: '7em' }}>
+            <Header as='h1'>Twitter Verified Account Activity Since Nov 7</Header>
+            <Container textAlign='left'>
+                <Grid divided stackable>
+                    <Grid.Column width={12}>
+                        <Header as='h4' content='Daily Count of Verified Accounts, Since Nov 7' />
+                        <TimeSeriesChart endpoint={DAILY_ENDPOINT} />
+                    </Grid.Column>
+                    <Grid.Column width={4}>
+                        <Header as='h4' content='Accounts that are no longer verified, random sample' />
+                        <AccountList endpoint={DIFFS_ENDPPOINT} type='deleted' />
+                    </Grid.Column>
+                    <Grid.Column width={12}>
+                        <Header as='h4' content='Hourly Count of Verified Accounts, Last 3 Days' />
+                        <TimeSeriesChart endpoint={HOURLY_ENDPOINT} />
+                    </Grid.Column>
+                    <Grid.Column width={4}>
+                        <Header as='h4' content='Accounts that are newly verified, random sample' />
+                        <AccountList endpoint={DIFFS_ENDPPOINT} type='added' />
+                    </Grid.Column>
 
-ChartJS.register(
-  TimeScale,
-  TimeSeriesScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-);
+                </Grid>
+            </Container>
+        </Container>
 
-export const options = {
-  response: true,
-  scales: {
-    x: {
-      type: "timeseries",
-      time: {
-        unit: "day",
-        /*displayFormats: {
-          'hour': 'MMM DD HH'
-        }*/
-      }
-    }
-  }
-};
-
-const tempData = {
-  datasets: [
-    {
-      label: 'Verified counts',
-      data: [],
-      borderColor: 'rgb(53, 162, 235)',
-      backgroundColor: 'rgba(53, 162, 235, 0.5)'
-    }
-  ]
-};
-
-/*
-time: {
-        displayFormats: {
-           'millisecond': 'MMM DD',
-           'second': 'MMM DD',
-           'minute': 'MMM DD',
-           'hour': 'MMM DD',
-           'day': 'MMM DD',
-           'week': 'MMM DD',
-           'month': 'MMM DD',
-           'quarter': 'MMM DD',
-           'year': 'MMM DD',
-        }
-*/
-
-export const App = () => {
-  const [timeseries, setTimeseries] = useState([]);
-  const [data, setData] = useState(tempData);
-  
-
-  useEffect(() => {
-    fetch(ENDPOINT)
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw response;
-        }
-      }).then((data) => {
-        const newResults = data.map((s) => {
-          return {
-            x: new Date(s.timestamp),
-            y: Number(s.count)
-          }
-        })
-        setTimeseries(newResults);
-        const newData = {
-          datasets: [
-            {
-              label: 'Verified counts',
-              data: newResults,
-              borderColor: 'rgb(53, 162, 235)',
-              backgroundColor: 'rgba(53, 162, 235, 0.5)'
-            }
-          ]
-        };
-        setData(newData);
-      }).catch((err) => {
-        console.error(err);
-      });
-  }, []);
-
-
-  return <Line options={options} data={data} />
-};
+        <Segment inverted vertical style={{ margin: '5em 0em 0em', padding: '5em 0em' }}>
+            <Container textAlign='center'>
+                <Label inverted as='a' size='small' href='mailto:contact@verifiend.xyz'>Contact</Label>
+            </Container>
+        </Segment>
+    </div>
+)
