@@ -19,11 +19,12 @@ export const App = () => (
     <div>
         <TopMenu />
         <Container style={{ marginTop: '7em' }}>
-            <Header as='h1'>Twitter Verified Account Activity Since Nov 7</Header>
+            <Header as='h1'>Twitter Verified Account Activity 11/7/22 - 2/8/23</Header>
+            <Header as='h4'>Halted collection on 2/8 due to Twitter API changes</Header>
             <Container textAlign='left'>
                 <Grid divided stackable>
                     <Grid.Column width={12}>
-                        <Header as='h4' content='Daily Count of Verified Accounts, Since Nov 7' />
+                        <Header as='h4' content='Daily Count of Verified Accounts, Nov 7' />
                         <TimeSeriesChart endpoint={DAILY_ENDPOINT} />
                     </Grid.Column>
                     <Grid.Column width={4}>
